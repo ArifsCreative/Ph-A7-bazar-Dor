@@ -3,8 +3,8 @@ import Image from "next/image";
 
 export default function Hero() {
   return (
-    <section className="w-full bg-[#F3FAF4]">
-      <div className="mx-auto grid min-h-[360px] max-w-[1160px] grid-cols-1 items-center gap-8 px-4 py-12 sm:px-6 md:grid-cols-2 md:gap-10 md:py-16 lg:px-8">
+<section className="mx-auto w-full max-w-[1160px] px-4 pt-6 sm:px-6 lg:px-8">
+  <div className="grid grid-cols-1 items-center gap-6 rounded-2xl border border-[#e3ebe4] bg-[#fafcf9] px-5 py-8 shadow-sm sm:px-8 md:min-h-[260px] md:grid-cols-2 md:gap-8 md:px-10 md:py-8">
         
         {/* LEFT CONTENT */}
         <div className="text-center md:text-left">
@@ -15,7 +15,7 @@ export default function Hero() {
           </span>
 
           {/* MAIN HEADING */}
-          <h1 className="text-[30px] leading-[1.35] font-extrabold tracking-tight text-[#172B1C] sm:text-[38px] lg:text-[46px]">
+          <h1 className="text-[27px] leading-[1.3] font-extrabold tracking-tight text-[#172B1C] sm:text-[30px] lg:text-[34px]">
             আজকের বাজারের দাম
             <br className="hidden sm:block" />
             <span className="text-[#079447]"> এক নজরে</span>
@@ -46,7 +46,7 @@ export default function Hero() {
             width={520}
             height={400}
             priority
-            className="h-auto w-full max-w-[460px] object-contain"
+            className="mx-auto h-auto w-full max-w-[260px] object-contain sm:max-w-[290px] lg:max-w-[320px]"
           />
         </div>
       </div>

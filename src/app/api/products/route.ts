@@ -4,14 +4,12 @@ import { NextResponse } from "next/server";
 export async function GET() {
   try {
     const response = await fetch(
-      "https://api.abcz.workers.dev/api/bazardor/products",
-      {
-        cache: "no-store",
-      }
+      "https://openapi.programming-hero.com/api/bazardor/products",
+      { cache: "no-store" }
     );
 
     if (!response.ok) {
-      throw new Error("API request failed");
+      throw new Error(`API status: ${response.status}`);
     }
 
     const data = await response.json();
@@ -21,7 +19,7 @@ export async function GET() {
     console.error("Products API error:", error);
 
     return NextResponse.json(
-      { error: "Unable to fetch products" },
+      { error: "Failed to load products" },
       { status: 502 }
     );
   }

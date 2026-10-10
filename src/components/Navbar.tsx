@@ -1,0 +1,328 @@
+
+"use client";
+
+import { useEffect, useState } from "react";
+import {
+    ShoppingCart,
+    ChevronDown,
+    UserRound,
+    LogOut,
+} from "lucide-react";
+
+type Category = {
+    id: string;
+    name: string;
+    icon: string;
+};
+
+const tickerProducts = [
+    {
+        id: 1,
+        emoji: "🍚",
+        name: "স্বর্ণমাছি চাল",
+        price: 148,
+        unit: "কেজি",
+        change: 2.1,
+    },
+    {
+        id: 2,
+        emoji: "🍚",
+        name: "মিনিকেট চাল",
+        price: 99,
+        unit: "কেজি",
+        change: -2.9,
+    },
+    {
+        id: 3,
+        emoji: "🥔",
+        name: "আলু",
+        price: 30,
+        unit: "কেজি",
+        change: -3.2,
+    },
+    {
+        id: 4,
+        emoji: "🧅",
+        name: "পেঁয়াজ",
+        price: 54,
+        unit: "কেজি",
+        change: 2.5,
+    },
+];
+
+const bn = (value: number) =>
+    value.toLocaleString("bn-BD", {
+        maximumFractionDigits: 1,
+    });
+
+export default function Navbar() {
+    const [activeCategory, setActiveCategory] = useState("all");
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [profileOpen, setProfileOpen] = useState(false);
+    const [banglaDate, setBanglaDate] = useState("বাংলা তারিখ");
+    const [categories, setCategories] = useState<Category[]>([
+        { id: "all", name: "সব", icon: "◉" },
+    ]);
+
+    useEffect(() => {
+        const updateDate = () => {
+            try {
+                const formatter = new Intl.DateTimeFormat(
+                    "bn-BD-u-ca-beng",
+                    {
+                        timeZone: "Asia/Dhaka",
+                        day: "numeric",
+                        month: "long",
+                        year: "numeric",
+                    }
+                );
+
+                setBanglaDate(formatter.format(new Date()));
+            } catch {
+                setBanglaDate(
+                    new Intl.DateTimeFormat("bn-BD", {
+                        timeZone: "Asia/Dhaka",
+                        dateStyle: "long",
+                    }).format(new Date())
+                );
+            }
+        };
+
+        updateDate();
+
+        const interval = window.setInterval(updateDate, 60_000);
+
+        return () => window.clearInterval(interval);
+    }, []);
+
+
+    useEffect(() => {
+        const controller = new AbortController();
+
+        async function fetchCategories() {
+            try {
+                const response = await fetch(
+                    "/api/products",
+                    { signal: controller.signal }
+                );
+
+                if (!response.ok) {
+                    throw new Error("Failed to fetch categories");
+                }
+
+                const result = await response.json();
+
+                const products = Array.isArray(result)
+                    ? result
+                    : result.products ?? result.data;
+
+                if (!Array.isArray(products)) {
+                    throw new Error("Invalid API response");
+                }
+
+                const uniqueCategories = new Map<string, Category>();
+
+                products.forEach((product) => {
+                    if (
+                        typeof product.category === "string" &&
+                        typeof product.categoryNameBn === "string"
+                    ) {
+                        if (!uniqueCategories.has(product.category)) {
+                            uniqueCategories.set(product.category, {
+                                id: product.category,
+                                name: product.categoryNameBn,
+                                icon: product.categoryIcon || "📦",
+                            });
+                        }
+                    }
+                });
+
+                if (!controller.signal.aborted) {
+                    setCategories([
+                        { id: "all", name: "সব", icon: "◉" },
+                        ...uniqueCategories.values(),
+                    ]);
+                }
+            } catch (error) {
+                if (!controller.signal.aborted) {
+                    console.error("Category API error:", error);
+                }
+            }
+        }
+
+        fetchCategories();
+
+        return () => controller.abort();
+    }, []);
+
+
+    const renderTickerItems = () =>
+        tickerProducts.map((item) => (
+            <div
+                key={item.id}
+                className="flex shrink-0 items-center gap-2 whitespace-nowrap text-[12px]"
+            >
+                <span>{item.emoji}</span>
+                <span className="font-medium">{item.name}</span>
+
+                <span className="font-semibold">
+                    ৳{bn(item.price)}/{item.unit}
+                </span>
+
+                <span
+                    className={
+                        item.change > 0
+                            ? "font-bold text-red-600"
+                            : "font-bold text-green-600"
+                    }
+                >
+                    {item.change > 0 ? "▲" : "▼"}
+                    {bn(Math.abs(item.change))}%
+                </span>
+            </div>
+        ));
+
+    return (
+        <header className="w-full bg-white text-gray-900">
+            {/* TOP HEADER */}
+            <div className="border-b border-gray-100">
+                <div className="mx-auto flex min-h-17 max-w-290 items-center justify-between gap-3 px-4 sm:px-6 lg:px-8">
+                    {/* LOGO */}
+                    <a href="/" className="flex items-center gap-2.5">
+                        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#079447] text-white">
+                            <ShoppingCart size={21} strokeWidth={2} />
+                        </div>
+
+                        <div className="flex flex-col">
+                            <span className="text-[18px] leading-tight font-extrabold text-[#1b241d]">
+                                বাজার দর
+                            </span>
+
+                            <span className="mt-1 text-[10px] leading-tight text-gray-500">
+                                {banglaDate}
+                            </span>
+                        </div>
+                    </a>
+
+                    {/* AUTH BUTTONS */}
+                    <div className="flex shrink-0 items-center gap-2">
+                        {!isLoggedIn ? (
+                            <>
+                                <button
+                                    type="button"
+                                    onClick={() => setIsLoggedIn(true)}
+                                    className="cursor-pointer rounded-lg border border-green-600 px-3 py-2 text-xs font-semibold text-green-700 hover:bg-green-50 sm:px-4"
+                                >
+                                    সাইন ইন
+                                </button>
+
+                                <button
+                                    type="button"
+                                    onClick={() => setIsLoggedIn(true)}
+                                    className="cursor-pointer rounded-lg bg-[#079447] px-3 py-2 text-xs font-semibold text-white hover:bg-green-700 sm:px-4"
+                                >
+                                    সাইন আপ
+                                </button>
+                            </>
+                        ) : (
+                            <div className="relative">
+                                <button
+                                    type="button"
+                                    onClick={() => setProfileOpen(!profileOpen)}
+                                    aria-expanded={profileOpen}
+                                    aria-haspopup="true"
+                                    className="flex cursor-pointer items-center gap-2 rounded-lg p-2 hover:bg-gray-50"
+                                >
+                                    <span className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-100">
+                                        <UserRound size={17} />
+                                    </span>
+                                    <span className="text-xs font-medium">
+                                        Rezwan
+                                    </span>
+                                    <ChevronDown size={14} />
+                                </button>
+
+                                {profileOpen && (
+                                    <div className="absolute top-full right-0 z-50 mt-2 w-36 rounded-lg border border-gray-100 bg-white p-1 shadow-lg">
+                                        <button
+                                            type="button"
+                                            onClick={() => {
+                                                setIsLoggedIn(false);
+                                                setProfileOpen(false);
+                                            }}
+                                            className="flex w-full cursor-pointer items-center gap-2 rounded-md px-3 py-2 text-xs text-red-600 hover:bg-red-50"
+                                        >
+                                            <LogOut size={15} />
+                                            সাইন আউট
+                                        </button>
+                                    </div>
+                                )}
+                            </div>
+                        )}
+                    </div>
+                </div>
+            </div>
+
+            {/* SECOND ROW: CATEGORIES */}
+            <nav
+                aria-label="পণ্যের ক্যাটাগরি"
+                className="border-b border-gray-100"
+            >
+                <div className="mx-auto max-w-290 px-4 sm:px-6 lg:px-8">
+                    <div className="flex items-center gap-5 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:gap-7">
+                        {categories.map((category) => {
+                            const isActive =
+                                activeCategory === category.id;
+
+                            return (
+                                <button
+                                    key={category.id}
+                                    type="button"
+                                    onClick={() =>
+                                        setActiveCategory(category.id)
+                                    }
+                                    aria-pressed={isActive}
+                                    className={`flex h-11 shrink-0 cursor-pointer items-center gap-1.5 whitespace-nowrap border-b-2 px-1 text-[12px] transition-colors sm:text-[13px] ${isActive
+                                        ? "border-[#079447] font-bold text-[#08763c]"
+                                        : "border-transparent font-medium text-gray-600 hover:text-green-600"
+                                        }`}
+                                >
+                                    <span
+                                        aria-hidden="true"
+                                        className="inline-flex h-5 w-5 shrink-0 items-center justify-center text-[15px]"
+                                    >
+                                        {category.icon}
+                                    </span>
+
+                                    <span>{category.name}</span>
+                                </button>
+                            );
+                        })}
+                    </div>
+                </div>
+            </nav>
+
+
+
+
+            {/* THIRD ROW: PRICE TICKER */}
+            <div className="w-full overflow-hidden border-b border-green-100 bg-[#f4fbf5] py-2.5">
+                <div className="bazar-ticker-animation">
+                    <div className="bazar-ticker-group">
+                        {renderTickerItems()}
+                    </div>
+
+                    <div
+                        className="bazar-ticker-group"
+                        aria-hidden="true"
+                    >
+                        {renderTickerItems()}
+                    </div>
+                </div>
+            </div>
+
+
+
+        </header>
+    );
+}

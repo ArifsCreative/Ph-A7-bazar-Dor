@@ -2,6 +2,9 @@
 import Link from "next/link";
 import { Suspense } from "react";
 import Navbar from "@/components/Navbar";
+import { headers } from "next/headers";
+import { redirect } from "next/navigation";
+import { auth } from "@/lib/auth";
 
 type Market = {
   market: string;
@@ -296,7 +299,18 @@ async function ProductContent({ params }: PageProps) {
   );
 }
 
-export default function ProductDetailPage({ params }: PageProps) {
+export default async function ProductDetailPage({ params }: PageProps) {
+
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+
+
+  if (!session) {
+    redirect("/signin");
+  }
+
+
   return (
     <>
       <Navbar />

@@ -1,6 +1,6 @@
-
 "use client";
 
+import { authClient } from "@/lib/auth-client";
 import { useEffect, useState } from "react";
 import {
     ShoppingCart,
@@ -55,7 +55,10 @@ const bn = (value: number) =>
         maximumFractionDigits: 1,
     });
 
+
+
 export default function Navbar() {
+    const { data: session } = authClient.useSession();
     const [activeCategory, setActiveCategory] = useState("all");
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [profileOpen, setProfileOpen] = useState(false);
@@ -183,146 +186,151 @@ export default function Navbar() {
         ));
 
     return (
-        <header className="w-full bg-white text-gray-900">
-            {/* TOP HEADER */}
-            <div className="border-b border-gray-100">
-                <div className="mx-auto flex min-h-17 max-w-290 items-center justify-between gap-3 px-4 sm:px-6 lg:px-8">
-                    {/* LOGO */}
-                    <a href="/" className="flex items-center gap-2.5">
-                        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#079447] text-white">
-                            <ShoppingCart size={21} strokeWidth={2} />
-                        </div>
+ <header className="w-full bg-white text-gray-900">
 
-                        <div className="flex flex-col">
-                            <span className="text-[18px] leading-tight font-extrabold text-[#1b241d]">
-                                বাজার দর
-                            </span>
+    {/* TOP HEADER */}
+    <div className="border-b border-gray-100">
+        <div className="mx-auto flex min-h-17 max-w-290 items-center justify-between gap-10 px-4 sm:px-6 lg:px-8">
 
-                            <span className="mt-1 text-[10px] leading-tight text-gray-500">
-                                {banglaDate}
-                            </span>
-                        </div>
+            {/* LOGO */}
+            <a
+                href="/"
+                className="flex shrink-0 items-center gap-3"
+            >
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#079447] text-white">
+                    <ShoppingCart size={21} strokeWidth={2} />
+                </div>
+
+                <div className="flex flex-col">
+                    <span className="whitespace-nowrap text-[18px] leading-tight font-extrabold">
+                        বাজার দর
+                    </span>
+
+                    <span className="mt-1 whitespace-nowrap text-[10px] text-gray-500">
+                        {banglaDate}
+                    </span>
+                </div>
+            </a>
+
+
+            {/* AUTH BUTTONS */}
+            {session ? (
+                <div className="flex items-center gap-3 whitespace-nowrap">
+
+                    <span className="font-medium">
+                        {session.user.name}
+                    </span>
+
+                    <button
+                        onClick={() => authClient.signOut()}
+                        className="rounded-lg bg-red-500 px-4 py-2 text-sm text-white"
+                    >
+                        Sign Out
+                    </button>
+
+                </div>
+
+            ) : (
+
+                <div className="flex items-center gap-4 whitespace-nowrap">
+
+                    <a
+                        href="/signin"
+                        className="text-sm text-gray-700 hover:text-green-600"
+                    >
+                        Sign In
                     </a>
 
-                    {/* AUTH BUTTONS */}
-                    <div className="flex shrink-0 items-center gap-2">
-                        {!isLoggedIn ? (
-                            <>
-                                <button
-                                    type="button"
-                                    onClick={() => setIsLoggedIn(true)}
-                                    className="cursor-pointer rounded-lg border border-green-600 px-3 py-2 text-xs font-semibold text-green-700 hover:bg-green-50 sm:px-4"
-                                >
-                                    সাইন ইন
-                                </button>
-
-                                <button
-                                    type="button"
-                                    onClick={() => setIsLoggedIn(true)}
-                                    className="cursor-pointer rounded-lg bg-[#079447] px-3 py-2 text-xs font-semibold text-white hover:bg-green-700 sm:px-4"
-                                >
-                                    সাইন আপ
-                                </button>
-                            </>
-                        ) : (
-                            <div className="relative">
-                                <button
-                                    type="button"
-                                    onClick={() => setProfileOpen(!profileOpen)}
-                                    aria-expanded={profileOpen}
-                                    aria-haspopup="true"
-                                    className="flex cursor-pointer items-center gap-2 rounded-lg p-2 hover:bg-gray-50"
-                                >
-                                    <span className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-100">
-                                        <UserRound size={17} />
-                                    </span>
-                                    <span className="text-xs font-medium">
-                                        Rezwan
-                                    </span>
-                                    <ChevronDown size={14} />
-                                </button>
-
-                                {profileOpen && (
-                                    <div className="absolute top-full right-0 z-50 mt-2 w-36 rounded-lg border border-gray-100 bg-white p-1 shadow-lg">
-                                        <button
-                                            type="button"
-                                            onClick={() => {
-                                                setIsLoggedIn(false);
-                                                setProfileOpen(false);
-                                            }}
-                                            className="flex w-full cursor-pointer items-center gap-2 rounded-md px-3 py-2 text-xs text-red-600 hover:bg-red-50"
-                                        >
-                                            <LogOut size={15} />
-                                            সাইন আউট
-                                        </button>
-                                    </div>
-                                )}
-                            </div>
-                        )}
-                    </div>
-                </div>
-            </div>
-
-            {/* SECOND ROW: CATEGORIES */}
-            <nav
-                aria-label="পণ্যের ক্যাটাগরি"
-                className="border-b border-gray-100"
-            >
-                <div className="mx-auto max-w-290 px-4 sm:px-6 lg:px-8">
-                    <div className="flex items-center gap-5 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:gap-7">
-                        {categories.map((category) => {
-                            const isActive =
-                                activeCategory === category.id;
-
-                            return (
-                                <button
-                                    key={category.id}
-                                    type="button"
-                                    onClick={() =>
-                                        setActiveCategory(category.id)
-                                    }
-                                    aria-pressed={isActive}
-                                    className={`flex h-11 shrink-0 cursor-pointer items-center gap-1.5 whitespace-nowrap border-b-2 px-1 text-[12px] transition-colors sm:text-[13px] ${isActive
-                                        ? "border-[#079447] font-bold text-[#08763c]"
-                                        : "border-transparent font-medium text-gray-600 hover:text-green-600"
-                                        }`}
-                                >
-                                    <span
-                                        aria-hidden="true"
-                                        className="inline-flex h-5 w-5 shrink-0 items-center justify-center text-[15px]"
-                                    >
-                                        {category.icon}
-                                    </span>
-
-                                    <span>{category.name}</span>
-                                </button>
-                            );
-                        })}
-                    </div>
-                </div>
-            </nav>
-
-
-
-
-            {/* THIRD ROW: PRICE TICKER */}
-            <div className="w-full overflow-hidden border-b border-green-100 bg-[#f4fbf5] py-2.5">
-                <div className="bazar-ticker-animation">
-                    <div className="bazar-ticker-group">
-                        {renderTickerItems()}
-                    </div>
-
-                    <div
-                        className="bazar-ticker-group"
-                        aria-hidden="true"
+                    <a
+                        href="/signup"
+                        className="text-sm text-gray-700 hover:text-green-600"
                     >
-                        {renderTickerItems()}
-                    </div>
+                        Sign Up
+                    </a>
+
                 </div>
+            )}
+
+        </div>
+    </div>
+
+
+
+    {/* SECOND ROW: CATEGORIES */}
+    <nav
+        aria-label="পণ্যের ক্যাটাগরি"
+        className="border-b border-gray-100"
+    >
+        <div className="mx-auto max-w-290 px-4 sm:px-6 lg:px-8">
+
+            <div className="flex items-center gap-5 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:gap-7">
+
+                {categories.map((category) => {
+
+                    const isActive =
+                        activeCategory === category.id;
+
+                    return (
+                        <button
+                            key={category.id}
+                            type="button"
+                            onClick={() =>
+                                setActiveCategory(category.id)
+                            }
+                            aria-pressed={isActive}
+                            className={`flex h-11 shrink-0 cursor-pointer items-center gap-1.5 whitespace-nowrap border-b-2 px-1 text-[12px] transition-colors sm:text-[13px]
+                            ${
+                                isActive
+                                    ? "border-[#079447] font-bold text-[#08763c]"
+                                    : "border-transparent font-medium text-gray-600 hover:text-green-600"
+                            }`}
+                        >
+
+                            <span
+                                aria-hidden="true"
+                                className="inline-flex h-5 w-5 shrink-0 items-center justify-center text-[15px]"
+                            >
+                                {category.icon}
+                            </span>
+
+                            <span>
+                                {category.name}
+                            </span>
+
+                        </button>
+                    );
+
+                })}
+
+            </div>
+
+        </div>
+    </nav>
+
+
+
+    {/* THIRD ROW: PRICE TICKER */}
+    <div className="w-full overflow-hidden border-b border-green-100 bg-[#f4fbf5] py-2.5">
+
+        <div className="bazar-ticker-animation">
+
+            <div className="bazar-ticker-group">
+                {renderTickerItems()}
             </div>
 
 
+            <div
+                className="bazar-ticker-group"
+                aria-hidden="true"
+            >
+                {renderTickerItems()}
+            </div>
 
-        </header>
+        </div>
+
+    </div>
+
+
+</header>
     );
 }

@@ -22,7 +22,7 @@ async function ProductInformation({ id }: { id: string }) {
   if (/^\d+$/.test(id)) {
     try {
       const response = await fetch(
-        `https://api.abcz.workers.dev/api/bazardor/products/${id}`,
+        `https://openapi.programming-hero.com/api/bazardor/${id}`,
         {
           cache: "no-store",
         }

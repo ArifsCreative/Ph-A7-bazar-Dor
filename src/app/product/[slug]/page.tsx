@@ -1,4 +1,3 @@
-
 import Link from "next/link";
 import { Suspense } from "react";
 import Navbar from "@/components/Navbar";
@@ -56,6 +55,14 @@ function unitBn(unit: string) {
 }
 
 async function ProductContent({ params }: PageProps) {
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+
+
+  if (!session) {
+    redirect("/signin");
+  }
   const { slug } = await params;
 
   let product: Product | null = null;
@@ -114,9 +121,9 @@ async function ProductContent({ params }: PageProps) {
 
   const average = markets.length
     ? markets.reduce(
-        (sum, m) => sum + (m.min + m.max) / 2,
-        0
-      ) / markets.length
+      (sum, m) => sum + (m.min + m.max) / 2,
+      0
+    ) / markets.length
     : null;
 
   const isUp = product.change.dir === "up";
@@ -141,7 +148,15 @@ async function ProductContent({ params }: PageProps) {
       <section className="rounded-2xl border border-[#e1e9e2] bg-white p-5 sm:p-7">
         <div className="flex flex-col gap-5 sm:flex-row sm:items-center">
           <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-xl bg-[#f0f6f0] text-4xl">
-            {product.image || "📦"}
+            {product.image ? (
+              <img
+                src={product.image}
+                alt={product.nameBn}
+                className="h-12 w-12 object-contain"
+              />
+            ) : (
+              "📦"
+            )}
           </div>
 
           <div className="min-w-0 flex-1">
@@ -174,13 +189,12 @@ async function ProductContent({ params }: PageProps) {
             </p>
 
             <p
-              className={`mt-2 text-xs font-bold ${
-                isUp
-                  ? "text-red-600"
-                  : isDown
-                    ? "text-green-600"
-                    : "text-gray-500"
-              }`}
+              className={`mt-2 text-xs font-bold ${isUp
+                ? "text-red-600"
+                : isDown
+                  ? "text-green-600"
+                  : "text-gray-500"
+                }`}
             >
               {isUp ? "▲" : isDown ? "▼" : "—"}{" "}
               {bn(Math.abs(product.change.pct))}%
@@ -257,11 +271,10 @@ async function ProductContent({ params }: PageProps) {
                   {markets.map((market, index) => (
                     <tr
                       key={`${market.market}-${index}`}
-                      className={`border-t border-[#e1e9e2] ${
-                        index % 2 === 0
-                          ? "bg-white"
-                          : "bg-[#f0f5f0]"
-                      }`}
+                      className={`border-t border-[#e1e9e2] ${index % 2 === 0
+                        ? "bg-white"
+                        : "bg-[#f0f5f0]"
+                        }`}
                     >
                       <td className="px-4 py-3">
                         {market.market}
@@ -299,17 +312,7 @@ async function ProductContent({ params }: PageProps) {
   );
 }
 
-export default async function ProductDetailPage({ params }: PageProps) {
-
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
-
-
-  if (!session) {
-    redirect("/signin");
-  }
-
+export default function ProductDetailPage({ params }: PageProps) {
 
   return (
     <>

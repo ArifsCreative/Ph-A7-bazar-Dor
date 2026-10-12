@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { authClient } from "@/lib/auth-client";
 import { useEffect, useState } from "react";
 import {
@@ -271,33 +272,24 @@ export default function Navbar() {
                         activeCategory === category.id;
 
                     return (
-                        <button
-                            key={category.id}
-                            type="button"
-                            onClick={() =>
-                                setActiveCategory(category.id)
-                            }
-                            aria-pressed={isActive}
-                            className={`flex h-11 shrink-0 cursor-pointer items-center gap-1.5 whitespace-nowrap border-b-2 px-1 text-[12px] transition-colors sm:text-[13px]
-                            ${
-                                isActive
-                                    ? "border-[#079447] font-bold text-[#08763c]"
-                                    : "border-transparent font-medium text-gray-600 hover:text-green-600"
-                            }`}
-                        >
+<Link
+    key={category.id}
+    href={`/category/${category.id}`}
+    className={`flex h-11 shrink-0 items-center gap-1.5 whitespace-nowrap border-b-2 px-1 text-[12px] transition-colors sm:text-[13px] ${
+        activeCategory === category.id
+        ? "border-[#079447] font-bold text-[#08763c]"
+        : "border-transparent font-medium text-gray-600 hover:text-green-600"
+    }`}
+>
+    <span className="inline-flex h-5 w-5 items-center justify-center text-[15px]">
+        {category.icon}
+    </span>
 
-                            <span
-                                aria-hidden="true"
-                                className="inline-flex h-5 w-5 shrink-0 items-center justify-center text-[15px]"
-                            >
-                                {category.icon}
-                            </span>
+    <span>
+        {category.name}
+    </span>
 
-                            <span>
-                                {category.name}
-                            </span>
-
-                        </button>
+</Link>
                     );
 
                 })}

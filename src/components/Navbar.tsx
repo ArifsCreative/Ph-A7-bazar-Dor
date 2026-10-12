@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { authClient } from "@/lib/auth-client";
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { toast, Toaster } from "sonner";
 import {
     ShoppingCart,
     ChevronDown,
@@ -60,6 +62,32 @@ const bn = (value: number) =>
 
 export default function Navbar() {
     const { data: session } = authClient.useSession();
+    const router = useRouter();
+    const [loggingOut, setLoggingOut] = useState(false);
+
+    async function handleLogout() {
+        if (loggingOut) return;
+
+        setLoggingOut(true);
+
+        try {
+            const result = await authClient.signOut();
+
+            if (result.error) {
+                toast.error(result.error.message || "Logout failed");
+                return;
+            }
+
+            toast.success("Logged out successfully!");
+
+            router.push("/");
+            router.refresh();
+        } catch {
+            toast.error("Something went wrong. Please try again.");
+        } finally {
+            setLoggingOut(false);
+        }
+    }
     const [activeCategory, setActiveCategory] = useState("all");
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [profileOpen, setProfileOpen] = useState(false);
@@ -187,142 +215,149 @@ export default function Navbar() {
         ));
 
     return (
- <header className="w-full bg-white text-gray-900">
+    <>
+        <Toaster position="top-right" richColors />
 
-    {/* TOP HEADER */}
-    <div className="border-b border-gray-100">
-        <div className="mx-auto flex min-h-17 max-w-290 items-center justify-between gap-10 px-4 sm:px-6 lg:px-8">
+        <header className="w-full bg-white text-gray-900">
 
-            {/* LOGO */}
-            <a
-                href="/"
-                className="flex shrink-0 items-center gap-3"
-            >
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#079447] text-white">
-                    <ShoppingCart size={21} strokeWidth={2} />
-                </div>
+            {/* TOP HEADER */}
+            <div className="border-b border-gray-100">
+                <div className="mx-auto flex min-h-17 max-w-290 items-center justify-between gap-10 px-4 sm:px-6 lg:px-8">
 
-                <div className="flex flex-col">
-                    <span className="whitespace-nowrap text-[18px] leading-tight font-extrabold">
-                        বাজার দর
-                    </span>
-
-                    <span className="mt-1 whitespace-nowrap text-[10px] text-gray-500">
-                        {banglaDate}
-                    </span>
-                </div>
-            </a>
-
-
-            {/* AUTH BUTTONS */}
-            {session ? (
-                <div className="flex items-center gap-3 whitespace-nowrap">
-
-                    <span className="font-medium">
-                        {session.user.name}
-                    </span>
-
-                    <button
-                        onClick={() => authClient.signOut()}
-                        className="rounded-lg bg-red-500 px-4 py-2 text-sm text-white"
-                    >
-                        Sign Out
-                    </button>
-
-                </div>
-
-            ) : (
-
-                <div className="flex items-center gap-4 whitespace-nowrap">
-
+                    {/* LOGO */}
                     <a
-                        href="/signin"
-                        className="text-sm text-gray-700 hover:text-green-600"
+                        href="/"
+                        className="flex shrink-0 items-center gap-3"
                     >
-                        Sign In
+                        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#079447] text-white">
+                            <ShoppingCart size={21} strokeWidth={2} />
+                        </div>
+
+                        <div className="flex flex-col">
+                            <span className="whitespace-nowrap text-[18px] leading-tight font-extrabold">
+                                বাজার দর
+                            </span>
+
+                            <span className="mt-1 whitespace-nowrap text-[10px] text-gray-500">
+                                {banglaDate}
+                            </span>
+                        </div>
                     </a>
 
-                    <a
-                        href="/signup"
-                        className="text-sm text-gray-700 hover:text-green-600"
-                    >
-                        Sign Up
-                    </a>
+
+                    {/* AUTH BUTTONS */}
+                    {session ? (
+                        <div className="flex items-center gap-3 whitespace-nowrap">
+
+                            <span className="font-medium">
+                                {session.user.name}
+                            </span>
+
+
+                            <button
+                                type="button"
+                                onClick={handleLogout}
+                                disabled={loggingOut}
+                                className="rounded-lg bg-red-500 px-4 py-2 text-sm text-white transition hover:bg-red-600 disabled:cursor-not-allowed disabled:opacity-60"
+                            >
+                                {loggingOut ? "Signing Out..." : "Sign Out"}
+                            </button>
+
+
+                        </div>
+
+                    ) : (
+
+                        <div className="flex items-center gap-4 whitespace-nowrap">
+
+                            <a
+                                href="/signin"
+                                className="text-sm text-gray-700 hover:text-green-600"
+                            >
+                                Sign In
+                            </a>
+
+                            <a
+                                href="/signup"
+                                className="text-sm text-gray-700 hover:text-green-600"
+                            >
+                                Sign Up
+                            </a>
+
+                        </div>
+                    )}
 
                 </div>
-            )}
-
-        </div>
-    </div>
-
-
-
-    {/* SECOND ROW: CATEGORIES */}
-    <nav
-        aria-label="পণ্যের ক্যাটাগরি"
-        className="border-b border-gray-100"
-    >
-        <div className="mx-auto max-w-290 px-4 sm:px-6 lg:px-8">
-
-            <div className="flex items-center gap-5 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:gap-7">
-
-                {categories.map((category) => {
-
-                    const isActive =
-                        activeCategory === category.id;
-
-                    return (
-<Link
-    key={category.id}
-    href={`/category/${category.id}`}
-    className={`flex h-11 shrink-0 items-center gap-1.5 whitespace-nowrap border-b-2 px-1 text-[12px] transition-colors sm:text-[13px] ${
-        activeCategory === category.id
-        ? "border-[#079447] font-bold text-[#08763c]"
-        : "border-transparent font-medium text-gray-600 hover:text-green-600"
-    }`}
->
-    <span className="inline-flex h-5 w-5 items-center justify-center text-[15px]">
-        {category.icon}
-    </span>
-
-    <span>
-        {category.name}
-    </span>
-
-</Link>
-                    );
-
-                })}
-
-            </div>
-
-        </div>
-    </nav>
-
-
-
-    {/* THIRD ROW: PRICE TICKER */}
-    <div className="w-full overflow-hidden border-b border-green-100 bg-[#f4fbf5] py-2.5">
-
-        <div className="bazar-ticker-animation">
-
-            <div className="bazar-ticker-group">
-                {renderTickerItems()}
             </div>
 
 
-            <div
-                className="bazar-ticker-group"
-                aria-hidden="true"
+
+            {/* SECOND ROW: CATEGORIES */}
+            <nav
+                aria-label="পণ্যের ক্যাটাগরি"
+                className="border-b border-gray-100"
             >
-                {renderTickerItems()}
+                <div className="mx-auto max-w-290 px-4 sm:px-6 lg:px-8">
+
+                    <div className="flex items-center gap-5 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:gap-7">
+
+                        {categories.map((category) => {
+
+                            const isActive =
+                                activeCategory === category.id;
+
+                            return (
+                                <Link
+                                    key={category.id}
+                                    href={`/category/${category.id}`}
+                                    className={`flex h-11 shrink-0 items-center gap-1.5 whitespace-nowrap border-b-2 px-1 text-[12px] transition-colors sm:text-[13px] ${activeCategory === category.id
+                                            ? "border-[#079447] font-bold text-[#08763c]"
+                                            : "border-transparent font-medium text-gray-600 hover:text-green-600"
+                                        }`}
+                                >
+                                    <span className="inline-flex h-5 w-5 items-center justify-center text-[15px]">
+                                        {category.icon}
+                                    </span>
+
+                                    <span>
+                                        {category.name}
+                                    </span>
+
+                                </Link>
+                            );
+
+                        })}
+
+                    </div>
+
+                </div>
+            </nav>
+
+
+
+            {/* THIRD ROW: PRICE TICKER */}
+            <div className="w-full overflow-hidden border-b border-green-100 bg-[#f4fbf5] py-2.5">
+
+                <div className="bazar-ticker-animation">
+
+                    <div className="bazar-ticker-group">
+                        {renderTickerItems()}
+                    </div>
+
+
+                    <div
+                        className="bazar-ticker-group"
+                        aria-hidden="true"
+                    >
+                        {renderTickerItems()}
+                    </div>
+
+                </div>
+
             </div>
 
-        </div>
 
-    </div>
-
-
-</header>
-    );
+        </header>
+    </>
+);
 }

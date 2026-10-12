@@ -88,13 +88,11 @@ export default function Navbar() {
             setLoggingOut(false);
         }
     }
-    const [activeCategory, setActiveCategory] = useState("all");
+
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [profileOpen, setProfileOpen] = useState(false);
     const [banglaDate, setBanglaDate] = useState("বাংলা তারিখ");
-    const [categories, setCategories] = useState<Category[]>([
-        { id: "all", name: "সব", icon: "◉" },
-    ]);
+    const [categories, setCategories] = useState<Category[]>([]);
 
     useEffect(() => {
         const updateDate = () => {
@@ -170,10 +168,7 @@ export default function Navbar() {
                 });
 
                 if (!controller.signal.aborted) {
-                    setCategories([
-                        { id: "all", name: "সব", icon: "◉" },
-                        ...uniqueCategories.values(),
-                    ]);
+                    setCategories([...uniqueCategories.values()]);
                 }
             } catch (error) {
                 if (!controller.signal.aborted) {
@@ -215,149 +210,138 @@ export default function Navbar() {
         ));
 
     return (
-    <>
-        <Toaster position="top-right" richColors />
+        <>
+            <Toaster position="top-right" richColors />
 
-        <header className="w-full bg-white text-gray-900">
+            <header className="w-full bg-white text-gray-900">
 
-            {/* TOP HEADER */}
-            <div className="border-b border-gray-100">
-                <div className="mx-auto flex min-h-17 max-w-290 items-center justify-between gap-10 px-4 sm:px-6 lg:px-8">
+                {/* TOP HEADER */}
+                <div className="border-b border-gray-100">
+                    <div className="mx-auto flex min-h-17 max-w-290 items-center justify-between gap-10 px-4 sm:px-6 lg:px-8">
 
-                    {/* LOGO */}
-                    <a
-                        href="/"
-                        className="flex shrink-0 items-center gap-3"
-                    >
-                        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#079447] text-white">
-                            <ShoppingCart size={21} strokeWidth={2} />
-                        </div>
+                        {/* LOGO */}
+                        <a
+                            href="/"
+                            className="flex shrink-0 items-center gap-3"
+                        >
+                            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#079447] text-white">
+                                <ShoppingCart size={21} strokeWidth={2} />
+                            </div>
 
-                        <div className="flex flex-col">
-                            <span className="whitespace-nowrap text-[18px] leading-tight font-extrabold">
-                                বাজার দর
-                            </span>
+                            <div className="flex flex-col">
+                                <span className="whitespace-nowrap text-[18px] leading-tight font-extrabold">
+                                    বাজার দর
+                                </span>
 
-                            <span className="mt-1 whitespace-nowrap text-[10px] text-gray-500">
-                                {banglaDate}
-                            </span>
-                        </div>
-                    </a>
-
-
-                    {/* AUTH BUTTONS */}
-                    {session ? (
-                        <div className="flex items-center gap-3 whitespace-nowrap">
-
-                            <span className="font-medium">
-                                {session.user.name}
-                            </span>
+                                <span className="mt-1 whitespace-nowrap text-[10px] text-gray-500">
+                                    {banglaDate}
+                                </span>
+                            </div>
+                        </a>
 
 
-                            <button
-                                type="button"
-                                onClick={handleLogout}
-                                disabled={loggingOut}
-                                className="rounded-lg bg-red-500 px-4 py-2 text-sm text-white transition hover:bg-red-600 disabled:cursor-not-allowed disabled:opacity-60"
-                            >
-                                {loggingOut ? "Signing Out..." : "Sign Out"}
-                            </button>
+                        {/* AUTH BUTTONS */}
+                        {session ? (
+                            <div className="flex items-center gap-3 whitespace-nowrap">
+
+                                <span className="font-medium">
+                                    {session.user.name}
+                                </span>
 
 
-                        </div>
+                                <button
+                                    type="button"
+                                    onClick={handleLogout}
+                                    disabled={loggingOut}
+                                    className="rounded-lg bg-red-500 px-4 py-2 text-sm text-white transition hover:bg-red-600 disabled:cursor-not-allowed disabled:opacity-60"
+                                >
+                                    {loggingOut ? "Signing Out..." : "Sign Out"}
+                                </button>
 
-                    ) : (
 
-                        <div className="flex items-center gap-4 whitespace-nowrap">
+                            </div>
 
-                            <a
-                                href="/signin"
-                                className="text-sm text-gray-700 hover:text-green-600"
-                            >
-                                Sign In
-                            </a>
+                        ) : (
 
-                            <a
-                                href="/signup"
-                                className="text-sm text-gray-700 hover:text-green-600"
-                            >
-                                Sign Up
-                            </a>
+                            <div className="flex items-center gap-4 whitespace-nowrap">
 
-                        </div>
-                    )}
+                                <a
+                                    href="/signin"
+                                    className="text-sm text-gray-700 hover:text-green-600"
+                                >
+                                    Sign In
+                                </a>
 
+                                <a
+                                    href="/signup"
+                                    className="text-sm text-gray-700 hover:text-green-600"
+                                >
+                                    Sign Up
+                                </a>
+
+                            </div>
+                        )}
+
+                    </div>
                 </div>
-            </div>
 
 
 
-            {/* SECOND ROW: CATEGORIES */}
-            <nav
-                aria-label="পণ্যের ক্যাটাগরি"
-                className="border-b border-gray-100"
-            >
-                <div className="mx-auto max-w-290 px-4 sm:px-6 lg:px-8">
+                {/* SECOND ROW: CATEGORIES */}
+                <nav
+                    aria-label="পণ্যের ক্যাটাগরি"
+                    className="border-b border-gray-100"
+                >
+                    <div className="mx-auto max-w-290 px-4 sm:px-6 lg:px-8">
 
-                    <div className="flex items-center gap-5 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:gap-7">
+                        <div className="flex items-center gap-5 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:gap-7">
 
-                        {categories.map((category) => {
 
-                            const isActive =
-                                activeCategory === category.id;
-
-                            return (
+                            {categories.map((category) => (
                                 <Link
                                     key={category.id}
                                     href={`/category/${category.id}`}
-                                    className={`flex h-11 shrink-0 items-center gap-1.5 whitespace-nowrap border-b-2 px-1 text-[12px] transition-colors sm:text-[13px] ${activeCategory === category.id
-                                            ? "border-[#079447] font-bold text-[#08763c]"
-                                            : "border-transparent font-medium text-gray-600 hover:text-green-600"
-                                        }`}
+                                    className="flex h-11 shrink-0 items-center gap-1.5 whitespace-nowrap border-b-2 border-transparent px-1 text-[12px] font-medium text-gray-600 transition-colors hover:border-[#079447] hover:text-green-600 sm:text-[13px]"
                                 >
                                     <span className="inline-flex h-5 w-5 items-center justify-center text-[15px]">
                                         {category.icon}
                                     </span>
 
-                                    <span>
-                                        {category.name}
-                                    </span>
-
+                                    <span>{category.name}</span>
                                 </Link>
-                            );
+                            ))}
 
-                        })}
+
+                        </div>
+
+                    </div>
+                </nav>
+
+
+
+                {/* THIRD ROW: PRICE TICKER */}
+                <div className="w-full overflow-hidden border-b border-green-100 bg-[#f4fbf5] py-2.5">
+
+                    <div className="bazar-ticker-animation">
+
+                        <div className="bazar-ticker-group">
+                            {renderTickerItems()}
+                        </div>
+
+
+                        <div
+                            className="bazar-ticker-group"
+                            aria-hidden="true"
+                        >
+                            {renderTickerItems()}
+                        </div>
 
                     </div>
 
                 </div>
-            </nav>
 
 
-
-            {/* THIRD ROW: PRICE TICKER */}
-            <div className="w-full overflow-hidden border-b border-green-100 bg-[#f4fbf5] py-2.5">
-
-                <div className="bazar-ticker-animation">
-
-                    <div className="bazar-ticker-group">
-                        {renderTickerItems()}
-                    </div>
-
-
-                    <div
-                        className="bazar-ticker-group"
-                        aria-hidden="true"
-                    >
-                        {renderTickerItems()}
-                    </div>
-
-                </div>
-
-            </div>
-
-
-        </header>
-    </>
-);
+            </header>
+        </>
+    );
 }

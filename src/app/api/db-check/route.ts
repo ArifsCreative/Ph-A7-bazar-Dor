@@ -1,41 +1,29 @@
 
 import { NextResponse } from "next/server";
-import { MongoClient } from "mongodb";
+import { db, mongoClient } from "@/lib/mongodb";
 
 export async function GET() {
-  const uri = process.env.MONGODB_URI;
-
-  if (!uri) {
-    return NextResponse.json(
-      { ok: false, error: "MONGODB_URI_MISSING" },
-      { status: 500 }
-    );
-  }
-
-  const client = new MongoClient(uri, {
-    serverSelectionTimeoutMS: 8000,
-  });
-
   try {
-    await client.connect();
-    await client.db("bazardor").command({ ping: 1 });
+    await mongoClient.connect();
+
+    await db.command({ ping: 1 });
 
     return NextResponse.json({
       ok: true,
-      message: "MongoDB connected",
+      message: "Shared MongoDB client connected",
     });
   } catch (error) {
-    console.error("MongoDB connectivity test:", error);
+    console.error("Shared MongoDB client error:", error);
 
     return NextResponse.json(
       {
         ok: false,
         error:
-          error instanceof Error ? error.name : "UNKNOWN_ERROR",
+          error instanceof Error
+            ? error.name
+            : "UNKNOWN_ERROR",
       },
       { status: 500 }
     );
-  } finally {
-    await client.close();
   }
 }

@@ -33,7 +33,7 @@ function bn(value: number) {
 }
 
 
-// Dynamic part goes here
+// Dynamic part
 async function CategoryContent({
     params,
 }: PageProps) {
@@ -82,8 +82,7 @@ async function CategoryContent({
     return (
 
         <>
-
-            {/* CATEGORY TITLE */}
+            {/* Category title */}
             <section className="rounded-2xl border border-[#e1e9e2] bg-white p-6">
 
                 <div className="flex items-center gap-4">
@@ -101,17 +100,11 @@ async function CategoryContent({
                         </p>
 
                     </div>
-
                 </div>
 
             </section>
 
-
-
-            {/* EMPTY STATE */}
-
-
-            {/* EMPTY STATE */}
+            {/* Empty State*/}
 
             {products.length === 0 ? (
                 <div className="mt-8 rounded-xl border p-8 text-center">
@@ -134,33 +127,23 @@ async function CategoryContent({
     );
 }
 
-
 // Static wrapper
 export default function CategoryPage({
     params,
 }: PageProps) {
 
-
     return (
-
         <>
-
             <Navbar />
 
-
             <main className="mx-auto min-h-screen max-w-[1160px] px-4 py-8">
-
 
                 <Suspense fallback={<Loading />}>
                     <CategoryContent params={params} />
                 </Suspense>
 
-
             </main>
-
-
         </>
-
     );
 
 }

@@ -1,4 +1,3 @@
-
 @import "tailwindcss";
 
 /* Global settings */
@@ -8,7 +7,7 @@ body {
   overflow-x: clip;
 }
 
-/* Infinite ticker animation */
+/* ticker animation */
 @keyframes bazarTickerScroll {
   from {
     transform: translateX(0);
@@ -29,7 +28,7 @@ body {
   will-change: transform;
 }
 
-/* Each repeated product group */
+/* Each product group */
 .bazar-ticker-group {
   display: flex;
   flex-direction: row;
@@ -41,7 +40,7 @@ body {
   width: max-content;
 }
 
-/* Individual products */
+/* Each products */
 .bazar-ticker-group > div {
   display: inline-flex;
   flex-shrink: 0;
@@ -49,7 +48,6 @@ body {
   white-space: nowrap;
 }
 
-/* Pause animation when hovering */
 .bazar-ticker-animation:hover {
   animation-play-state: paused;
 }

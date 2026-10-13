@@ -13,7 +13,6 @@ export default function SigninLoading() {
         </div>
 
         <div className="my-6 h-4 rounded bg-gray-100" />
-
         <div className="grid grid-cols-2 gap-3">
           <div className="h-12 rounded-xl bg-gray-200" />
           <div className="h-12 rounded-xl bg-gray-200" />

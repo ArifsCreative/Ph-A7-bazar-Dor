@@ -1,4 +1,3 @@
-
 export type Product = {
   id: number;
   slug: string;

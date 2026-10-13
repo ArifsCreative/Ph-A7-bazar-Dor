@@ -2,7 +2,7 @@
 export default function Loading() {
   return (
     <div className="w-full">
-      {/* CATEGORY HEADER SKELETON */}
+      {/* category skeleton*/}
       <div className="animate-pulse rounded-2xl border border-[#e1e9e2] bg-white p-6">
         <div className="flex items-center gap-4">
           <div className="h-14 w-14 rounded-xl bg-gray-200" />
@@ -14,13 +14,13 @@ export default function Loading() {
         </div>
       </div>
 
-      {/* SORT BAR SKELETON */}
+      {/* sort skeleton */}
       <div className="mt-8 flex items-center justify-between">
         <div className="h-6 w-28 animate-pulse rounded bg-gray-200" />
         <div className="h-10 w-40 animate-pulse rounded-lg bg-gray-200" />
       </div>
 
-      {/* PRODUCT CARD SKELETONS */}
+      {/* products skeleton */}
       <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {Array.from({ length: 6 }).map((_, index) => (
           <div

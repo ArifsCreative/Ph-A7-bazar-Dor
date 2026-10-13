@@ -15,7 +15,7 @@ type PageProps = {
   params: Promise<{ id: string }>;
 };
 
-// Product information with server-side fetching
+// Product info
 async function ProductInformation({ id }: { id: string }) {
   let product: Product | null = null;
 
@@ -87,7 +87,6 @@ async function ProductInformation({ id }: { id: string }) {
     </div>
   );
 }
-
 
 async function ProductContent({
   params,

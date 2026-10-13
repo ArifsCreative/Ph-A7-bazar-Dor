@@ -59,7 +59,6 @@ async function ProductContent({ params }: PageProps) {
     headers: await headers(),
   });
 
-
   if (!session) {
     redirect("/signin");
   }
@@ -131,7 +130,7 @@ async function ProductContent({ params }: PageProps) {
 
   return (
     <div className="space-y-6">
-      {/* BREADCRUMB */}
+
       <div className="flex flex-wrap items-center gap-2 text-xs text-gray-600">
         <Link href="/" className="hover:text-green-700">
           হোম
@@ -144,7 +143,7 @@ async function ProductContent({ params }: PageProps) {
         </span>
       </div>
 
-      {/* PRODUCT SUMMARY */}
+      {/* products summary */}
       <section className="rounded-2xl border border-[#e1e9e2] bg-white p-5 sm:p-7">
         <div className="flex flex-col gap-5 sm:flex-row sm:items-center">
           <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-xl bg-[#f0f6f0] text-4xl">
@@ -203,7 +202,7 @@ async function ProductContent({ params }: PageProps) {
         </div>
       </section>
 
-      {/* PRICE SUMMARY */}
+      {/* price summary */}
       <section className="rounded-2xl border border-[#e1e9e2] bg-white p-4 sm:p-6">
         <h2 className="mb-4 text-lg font-extrabold text-gray-900">
           দামের সারসংক্ষেপ
@@ -244,7 +243,7 @@ async function ProductContent({ params }: PageProps) {
           ))}
         </div>
 
-        {/* MARKET PRICE TABLE */}
+        {/* Market Price */}
         <h2 className="mb-4 mt-8 text-lg font-extrabold text-gray-900">
           বাজারভিত্তিক আজকের দাম
         </h2>

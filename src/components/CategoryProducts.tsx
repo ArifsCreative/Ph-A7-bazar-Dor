@@ -41,7 +41,7 @@ export default function CategoryProducts({ products }: Props) {
 
   return (
     <>
-      {/* SORT DROPDOWN */}
+      {/* sort dropdown */}
       <div className="mt-8 flex items-center justify-between gap-3">
         <h2 className="text-lg font-bold text-[#1b2a1f]">
           পণ্য তালিকা
@@ -70,7 +70,7 @@ export default function CategoryProducts({ products }: Props) {
 
       </div>
 
-      {/* PRODUCT CARDS */}
+      {/* product card */}
       <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {sortedProducts.map((product) => (
           <Link
@@ -107,8 +107,8 @@ export default function CategoryProducts({ products }: Props) {
 
               <span
                 className={`rounded-full px-3 py-1 text-xs ${product.change.dir === "up"
-                    ? "bg-red-50 text-red-600"
-                    : "bg-green-50 text-green-600"
+                  ? "bg-red-50 text-red-600"
+                  : "bg-green-50 text-green-600"
                   }`}
               >
                 {product.change.dir === "up" ? "▲" : "▼"}

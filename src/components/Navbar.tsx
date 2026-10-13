@@ -7,9 +7,6 @@ import { useRouter } from "next/navigation";
 import { toast, Toaster } from "sonner";
 import {
     ShoppingCart,
-    ChevronDown,
-    UserRound,
-    LogOut,
 } from "lucide-react";
 
 type Category = {
@@ -58,8 +55,6 @@ const bn = (value: number) =>
         maximumFractionDigits: 1,
     });
 
-
-
 export default function Navbar() {
     const { data: session } = authClient.useSession();
     const router = useRouter();
@@ -101,6 +96,7 @@ export default function Navbar() {
                     "bn-BD-u-ca-beng",
                     {
                         timeZone: "Asia/Dhaka",
+                        weekday: "long",
                         day: "numeric",
                         month: "long",
                         year: "numeric",
@@ -215,12 +211,13 @@ export default function Navbar() {
 
             <header className="w-full bg-white text-gray-900">
 
-                {/* TOP HEADER */}
+                {/*Headerr */}
+
                 <div className="border-b border-gray-100">
                     <div className="mx-auto flex min-h-17 max-w-290 items-center justify-between gap-10 px-4 sm:px-6 lg:px-8">
 
-                        {/* LOGO */}
-                        <a
+                        {/* logo */}
+                        <Link
                             href="/"
                             className="flex shrink-0 items-center gap-3"
                         >
@@ -237,57 +234,91 @@ export default function Navbar() {
                                     {banglaDate}
                                 </span>
                             </div>
-                        </a>
+                        </Link>
 
+                        {/* Auth buttons */}
 
-                        {/* AUTH BUTTONS */}
                         {session ? (
-                            <div className="flex items-center gap-3 whitespace-nowrap">
-
-                                <span className="font-medium">
-                                    {session.user.name}
-                                </span>
-
+                            <div className="relative">
 
                                 <button
                                     type="button"
-                                    onClick={handleLogout}
-                                    disabled={loggingOut}
-                                    className="rounded-lg bg-red-500 px-4 py-2 text-sm text-white transition hover:bg-red-600 disabled:cursor-not-allowed disabled:opacity-60"
+                                    onClick={() => setProfileOpen(!profileOpen)}
+                                    className="flex items-center gap-3 whitespace-nowrap"
                                 >
-                                    {loggingOut ? "Signing Out..." : "Sign Out"}
+
+                                    <img
+                                        src="/images/profile-img.webp"
+                                        alt="Profile"
+                                        className="h-9 w-9 rounded-full object-cover"
+                                    />
+
+                                    <span className="text-sm font-medium text-gray-800">
+                                        {session.user.name}
+                                    </span>
+
+                                    <span className="text-xs text-gray-500">
+                                        ▾
+                                    </span>
+
                                 </button>
 
+                                {profileOpen && (
 
+                                    <div className="absolute right-0 top-12 z-50 w-64 rounded-2xl border border-gray-100 bg-white p-4 shadow-lg">
+
+                                        <div className="mb-4">
+
+                                            <p className="font-bold text-gray-900">
+                                                {session.user.name}
+                                            </p>
+
+                                            <p className="text-sm text-gray-500">
+                                                {session.user.email}
+                                            </p>
+
+                                        </div>
+
+                                        <a
+                                            href="/profile"
+                                            className="block rounded-lg px-3 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                                        >
+                                            👤 আমার প্রোফাইল
+                                        </a>
+
+                                        <button
+                                            type="button"
+                                            onClick={handleLogout}
+                                            disabled={loggingOut}
+                                            className="mt-2 block w-full rounded-lg px-3 py-2 text-left text-sm text-red-500 hover:bg-red-50 disabled:opacity-60"
+                                        >
+                                            {loggingOut ? "Signing Out..." : "↩ সাইন আউট"}
+                                        </button>
+                                    </div>
+                                )}
                             </div>
 
                         ) : (
 
                             <div className="flex items-center gap-4 whitespace-nowrap">
-
                                 <a
                                     href="/signin"
                                     className="text-sm text-gray-700 hover:text-green-600"
                                 >
-                                    Sign In
+                                    সাইন ইন
                                 </a>
-
                                 <a
                                     href="/signup"
-                                    className="text-sm text-gray-700 hover:text-green-600"
+                                    className="rounded-lg bg-[#079447] px-5 py-2.5 text-sm font-medium text-white shadow-sm transition hover:bg-green-700"
                                 >
-                                    Sign Up
+                                    সাইন আপ
                                 </a>
-
                             </div>
                         )}
-
                     </div>
                 </div>
 
-
-
-                {/* SECOND ROW: CATEGORIES */}
+                {/* catagories */}
                 <nav
                     aria-label="পণ্যের ক্যাটাগরি"
                     className="border-b border-gray-100"
@@ -295,7 +326,6 @@ export default function Navbar() {
                     <div className="mx-auto max-w-290 px-4 sm:px-6 lg:px-8">
 
                         <div className="flex items-center gap-5 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:gap-7">
-
 
                             {categories.map((category) => (
                                 <Link
@@ -310,16 +340,11 @@ export default function Navbar() {
                                     <span>{category.name}</span>
                                 </Link>
                             ))}
-
-
                         </div>
-
                     </div>
                 </nav>
 
-
-
-                {/* THIRD ROW: PRICE TICKER */}
+                {/*  Price Ticker */}
                 <div className="w-full overflow-hidden border-b border-green-100 bg-[#f4fbf5] py-2.5">
 
                     <div className="bazar-ticker-animation">
@@ -327,19 +352,14 @@ export default function Navbar() {
                         <div className="bazar-ticker-group">
                             {renderTickerItems()}
                         </div>
-
-
                         <div
                             className="bazar-ticker-group"
                             aria-hidden="true"
                         >
                             {renderTickerItems()}
                         </div>
-
                     </div>
-
                 </div>
-
 
             </header>
         </>

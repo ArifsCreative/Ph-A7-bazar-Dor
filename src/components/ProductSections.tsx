@@ -73,14 +73,15 @@ function ProductCard({ product }: { product: Product }) {
       aria-label={`${product.nameBn} - বিস্তারিত দেখুন`}
     >
       <div className="flex items-start gap-3">
-        {/* PRODUCT EMOJI */}
+
+        {/* product emoji */}
         <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[#edf5ee] text-2xl">
           <span role="img" aria-label={product.nameBn}>
             {product.image || "📦"}
           </span>
         </div>
 
-        {/* PRODUCT NAME */}
+        {/* prod name */}
         <div className="min-w-0 flex-1">
           <h3 className="wrap-break-word text-[14px] leading-6 font-bold text-[#1d2b20] group-hover:text-green-700">
             {product.nameBn}
@@ -92,7 +93,7 @@ function ProductCard({ product }: { product: Product }) {
         </div>
       </div>
 
-      {/* PRICE INFORMATION */}
+      {/* price info */}
       <div className="mt-5 flex items-end justify-between gap-2">
         <div className="min-w-0">
           <p className="text-[11px] text-gray-500">
@@ -215,7 +216,7 @@ export default function ProductSections() {
     return () => controller.abort();
   }, []);
 
-  // SIX PRODUCTS WITH THE LARGEST PRICE INCREASES
+  // six products price increases
   const topRisers = products
     .filter(
       (p) => p.change.dir === "up" && p.change.pct !== 0
@@ -226,7 +227,7 @@ export default function ProductSections() {
     )
     .slice(0, 6);
 
-  // SIX PRODUCTS WITH THE LARGEST PRICE DECREASES
+  // six products price decreases
   const topFallers = products
     .filter(
       (p) => p.change.dir === "down" && p.change.pct !== 0
@@ -260,7 +261,7 @@ export default function ProductSections() {
   return (
     <div className="mx-auto w-full max-w-[1160px] space-y-10 px-4 py-10 sm:space-y-12 sm:px-6 lg:px-8">
 
-      {/* SECTION A: PRICE INCREASE */}
+      {/* price increases */}
       <section aria-labelledby="risers-heading">
         <h2
           id="risers-heading"
@@ -273,7 +274,7 @@ export default function ProductSections() {
         <ProductGrid products={topRisers} />
       </section>
 
-      {/* SECTION B: PRICE DECREASE */}
+      {/* price decreases */}
       <section aria-labelledby="fallers-heading">
         <h2
           id="fallers-heading"
@@ -286,7 +287,7 @@ export default function ProductSections() {
         <ProductGrid products={topFallers} />
       </section>
 
-      {/* SECTION C: ALL PRODUCTS */}
+      {/* all products */}
       <section
         id="সব-পণ্য"
         aria-labelledby="products-heading"

@@ -3,12 +3,8 @@ import { NextResponse } from "next/server";
 export async function GET() {
   try {
     const [productsRes, categoriesRes] = await Promise.all([
-      fetch(
-        "https://openapi.programming-hero.com/api/bazardor/products"
-      ),
-      fetch(
-        "https://openapi.programming-hero.com/api/bazardor/categories"
-      ),
+      fetch("https://openapi.programming-hero.com/api/bazardor/products"),
+      fetch("https://openapi.programming-hero.com/api/bazardor/categories"),
     ]);
 
     const products = await productsRes.json();
@@ -18,7 +14,6 @@ export async function GET() {
       products,
       categories,
     });
-
   } catch (error) {
     return NextResponse.json(
       {
@@ -26,7 +21,7 @@ export async function GET() {
       },
       {
         status: 500,
-      }
+      },
     );
   }
 }
